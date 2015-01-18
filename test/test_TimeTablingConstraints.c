@@ -1,6 +1,7 @@
 #include "unity.h"
 #include <stdio.h>
 #include "TimeTabling.h"
+#include "mock_Random.h"
 #include "ErrorCode.h"
 										
 void setUp(void){

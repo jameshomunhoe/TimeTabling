@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "TimeTabling.h"
 #include "ErrorCode.h"
+#include "Random.h"
 #include "CException.h"
 
 void setUp(void){
@@ -89,15 +90,48 @@ void test_performCrossover_should_fill_in_offSpring(){
 	performCrossover(topFitness,topFitness2,offSpring);
 	TEST_ASSERT_EQUAL(sizeof(topFitness)/sizeof(Class), sizeof(offSpring)/sizeof(Class));
 	
-	
-	// int i,retLoopVenue = 0, retLoopDay = 0, retLoopTime = 0;
-	// for( i = 0 ; i < (MAX_VENUE*MAX_DAY*MAX_TIME_SLOTS) ; i++){
-			// printf("%d : ",i+1);
-		// if(offSpring[retLoopVenue][retLoopDay][retLoopTime].course != NULL){
-			// printf("%s\n",offSpring[retLoopVenue][retLoopDay][retLoopTime].course ->courseName);
-		// }
-		// else
-			// printf("no class, whahha\n");
-		// indexForward(&retLoopVenue,&retLoopDay,&retLoopTime);	
-	// }
+	/**
+  *   To make sure the elements are same.
+  *   Not able to test assert because it is swapped randomly when crossover
+  *   Swap is too complicated to mock
+  *   List should contains:
+  *   - 10 Mathematics
+  *   -  6 English
+  *   -  6 History
+  *   -  6 Add Math
+  *   - 14 Test Driven Development
+  *   - 10 Electromagnetics
+  *   - 52 filled, 8 empty.
+  *
+  *   create counter[6]
+  *   counter[0] = Mathematics,
+  *   counter[1] = English,
+  *   counter[2] = History,
+  *   counter[3] = Add Math,
+  *   counter[4] = Test Driven Development,
+  *   counter[5] = Electromagnetics,
+  *   counter[6] = empty
+  **/
+  
+  int counter[7] = {0};
+	int i,j,retLoopVenue = 0, retLoopDay = 0, retLoopTime = 0;
+	for( i = 0 ; i < (MAX_VENUE*MAX_DAY*MAX_TIME_SLOTS) ; i++){
+		if(offSpring[retLoopVenue][retLoopDay][retLoopTime].course != NULL){
+      for(j=0;j<7;j++){
+        if(offSpring[retLoopVenue][retLoopDay][retLoopTime].course->courseName == course[j].courseName)
+          counter[j]++;
+      }
+		}
+    else
+      counter[6]++;
+		indexForward(&retLoopVenue,&retLoopDay,&retLoopTime);	
+	}
+  
+  TEST_ASSERT_EQUAL(10,counter[0]);
+  TEST_ASSERT_EQUAL(6,counter[1]);
+  TEST_ASSERT_EQUAL(6,counter[2]);
+  TEST_ASSERT_EQUAL(6,counter[3]);
+  TEST_ASSERT_EQUAL(14,counter[4]);
+  TEST_ASSERT_EQUAL(10,counter[5]);
+  TEST_ASSERT_EQUAL(8,counter[6]);
 }

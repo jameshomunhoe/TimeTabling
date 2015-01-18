@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "TimeTabling.h"
 #include "ErrorCode.h"
+#include "mock_Random.h"
 #include "CException.h"
 
 void setUp(void){
@@ -132,85 +133,6 @@ void test_clearClass_should_able_to_remove_elements(){
 	
 }
 
-
-void test_randomizeClassList_can_create_newList(){
- Class testList[52];
- clearClassList(sizeof(testList)/sizeof(Class) , testList);
- randomizeClassList(sizeof(testList)/sizeof(Class),testList);
-
-TEST_ASSERT_NOT_NULL(testList[0].course );
- 
-
-}
-
-void test_createPopulationOfChromosome(){
-	int i;
-	
-	clearPopulation(populationOfClasses);
-	createPopulationsOfChromosome(sizeof(classList)/sizeof(Class));
-
-	TEST_ASSERT_NOT_NULL(populationOfClasses[0].class[0][0][0].course);
-
-	TEST_ASSERT_EQUAL(populationOfClasses[0].violation , calculateFitnessScore(populationOfClasses[0].class));
-}
-
-void test_copyPopulation_should_copy_population_over(){
-	int i = 0 ,j = 0, k = 0, l;
-	clearPopulation(populationOfClasses);
-	createPopulationsOfChromosome(sizeof(classList)/sizeof(Class));
-	
-	Population resultPop = copyPopulation(populationOfClasses[0]);
-	
-	TEST_ASSERT_EQUAL(populationOfClasses[0].violation, resultPop.violation);
-	for( l = 0 ; l < (MAX_VENUE*MAX_DAY*MAX_TIME_SLOTS) ; l++){
-		TEST_ASSERT_EQUAL(populationOfClasses[0].class[i][j][k].typeOfClass, resultPop.class[i][j][k].typeOfClass);
-		indexForward(&i,&j,&k);
-	}
-}
-
-void test_sortPopulationsAccordingToFitness_should_swap_population_fitness_in_ascending_order(){
-	clearPopulation(populationOfClasses);
-	int pop0Violation, pop1Violation;
-	Population pop[2];
-	
-	fillInTheChromosome(classList, sizeof(classList)/sizeof(Class));
-	copyClass(class, pop[0].class);
-	pop[0].violation = calculateFitnessScore(pop[0].class);
-	pop0Violation = pop[0].violation;
-	
-	clearClass(class);
-	
-	fillInTheChromosomeWithReducingViolation(classList, sizeof(classList)/sizeof(Class));
-	copyClass(class, pop[1].class);
-	pop[1].violation = calculateFitnessScore(pop[1].class);
-	pop1Violation = pop[1].violation;
-	clearClass(class);
-	
-	sortPopulationsAccordingToFitness(pop, sizeof(pop)/sizeof(Population));
-	
-	TEST_ASSERT_EQUAL(pop1Violation, pop[0].violation);
-	TEST_ASSERT_EQUAL(pop0Violation, pop[1].violation);
-	
-}
-
-
-void test_sortPopulationsAccordingToFitness_should_sort_fitness_in_ascending_order(){
-	int i, compareResult;
-	clearPopulation(populationOfClasses);
-	createPopulationsOfChromosome(sizeof(classList)/sizeof(Class));
-	
-	sortPopulationsAccordingToFitness(populationOfClasses, sizeof(populationOfClasses)/sizeof(Population));
-	
-	for(i= 0 ; i+1 < sizeof(populationOfClasses)/sizeof(Population) ; i++){
-		if(populationOfClasses[i].violation <= populationOfClasses[i+1].violation)
-			compareResult = 1;
-		else
-			compareResult = 0;
-			
-			TEST_ASSERT_EQUAL(1, compareResult);
-	}
-}
-	
 void test_compareClass_should_return_1_if_all_elements_are_same(){
 	Class test = classList[0];
 	Class test1 = classList[0];
@@ -225,5 +147,50 @@ void test_compareClass_should_return_0_if_one_elements_not_same(){
 
 	TEST_ASSERT_EQUAL(0, compareClass(test,test1));
 }
+
+/**
+*   The purpose of this function is to make sure all the elements are copied
+*   accordingly from the classList to newList(randomList)
+*   In this function, mock is used to make sure it works
+*   Mock the value from sizeofList - 1, to 0 (totally inverted order)
+*   And then test whether the elements are equals in both list.
+*/
+void test_randomizeClassList_can_create_newList(){
+ Class testList[52];
+ clearClassList(sizeof(testList)/sizeof(Class) , testList);
+
+ int i, j;
+ i =  sizeof(testList)/sizeof(Class) - 1;
+ 
+ /**
+ *  Mock from 51 to 0
+ *  result will be this
+ *  classList       testList
+ *     51      >       0
+ *     50      >       1
+ *     .       >       .
+ *     .       >       .
+ *     0       >       51
+ **/
+ while( i >= 0){
+  random_ExpectAndReturn(sizeof(testList)/sizeof(Class), i);
+  i--;
+ }
+ 
+ //run the function
+ randomizeClassList(sizeof(testList)/sizeof(Class),testList);
+ 
+ i = sizeof(testList)/sizeof(Class) - 1;
+ j = 0;
+ // TEST_ASSERT weather the courses are same
+ while( i >= 0 && j < sizeof(testList)/sizeof(Class)){
+   TEST_ASSERT_EQUAL(1, compareClass(testList[i], classList[j]));
+   i--;
+   j++;
+ }
+ 
+}
+
+
 
 

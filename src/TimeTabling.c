@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "TimeTabling.h"
+#include "Random.h"
 #include "TimeTablingClassList.h"
 #include "ErrorCode.h"
 #include "CException.h"
@@ -476,10 +477,9 @@ Population copyPopulation(Population sourcePopulation){
  *****************************************************************************/
 void randomizeClassList(int sizeOfClassList, Class targetClassList[sizeOfClassList]){
 	int i, j;
-	int r;
 
 	for(i = 0 ; i < sizeOfClassList; ){
-		j = rand()%sizeOfClassList;
+		j = random(sizeOfClassList);
 			if(targetClassList[j].course == NULL){
 				targetClassList[j] = copyClassSlot(classList[i]);
 				i++;
@@ -666,8 +666,8 @@ void performCrossover(Class newClass[MAX_VENUE][MAX_DAY][MAX_TIME_SLOTS], Class 
 	// CEXCEPTION_T e;
 	
 	clearClass(offSpring);
-	randomNumberLeft = rand()%(sizeof(classList)/sizeof(Class));
-	randomNumberRight = rand()%(sizeof(classList)/sizeof(Class));
+	randomNumberLeft = random((sizeof(classList)/sizeof(Class)));
+	randomNumberRight = random((sizeof(classList)/sizeof(Class)));
 	
 	for( i = 0 ; i < (MAX_VENUE*MAX_DAY*MAX_TIME_SLOTS) ; i++){
 		if(compareClass(newClass[venueToLeft][dayToLeft][timeToLeft],classList[randomNumberLeft]) == 1)

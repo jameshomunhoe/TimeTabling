@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "TimeTabling.h"
 #include "ErrorCode.h"
+#include "Random.h"
 
 void setUp(void){
 	int venue = 0;
@@ -81,7 +82,7 @@ void test_calculateFitnessScore_should_return_12_when_violates_all_but_TuitionOv
    *  checkIfLecturerAppearInTwoVenue = 1
    *  checkStudentViolation = 1
    *  determineViolationForCourseVenueSize = 10
-   *  total should be 5
+   *  total should be 12
    */
 	class[0][0][0].group[0] = &group[0];
 	class[0][0][0].group[1] = &group[1];
@@ -102,7 +103,7 @@ void test_calculateFitnessScore_should_return_12_when_violates_all_but_checkIfLe
    *  checkIfLecturerAppearInTwoVenue = 0
    *  checkStudentViolation = 1
    *  determineViolationForCourseVenueSize = 10
-   *  total should be 5
+   *  total should be 12
    */
 	
 	class[0][0][0].group[0] = &group[0];
@@ -135,7 +136,7 @@ void test_calculateFitnessScore_should_return_12_when_violates_all_but_checkStud
    *  checkIfLecturerAppearInTwoVenue = 1
    *  checkStudentViolation = 0
    *  determineViolationForCourseVenueSize = 10
-   *  total should be 5
+   *  total should be 12
    */
 	
 	class[0][0][0].group[0] = &group[0];
